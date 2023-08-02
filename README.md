@@ -1,92 +1,68 @@
-# 4chan_scraper
+# 4TCT 
+## A 4chan Text Collection Tool
 
+## Author details
+- Jack H. Culbert
+- jack.culbert@gesis.org
+- https://orcid.org/0009-0000-1581-4021
 
+## Resource Paper
+You can find the associated technical report [here](https://arxiv.org/abs/2307.03556).
 
-## Getting started
+Please reference this paper if you use this tool in research or your own projects.
+## Disclaimer
+Both the author and GESIS are not affiliated, associated, authorized, endorsed by, or in any way officially connected with 4chan, or any of its subsidiaries or its affiliates. The official 4chan website can be found at [4chan.org](https://www.4chan.org).
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+The names 4chan as well as related names, marks, emblems and images are registered trademarks of their respective owners.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.gesis.org/bda/4chan_scraper.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://git.gesis.org/bda/4chan_scraper/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
+Please be aware 4chan may serve offensive and/or illegal images and texts, and it is the sole responsibility of the user to vet and remove material that may be illegal in their jurisdiction. The author and GESIS shall have unlimited liability for damages resulting from injury to life, limb or health and in the event of liability under the German Product Liability Act (Act on Liability for Defective Products). This shall also apply in the event of a breach of so-called cardinal obligations, i.e. obligations the breach of which would jeopardize the purpose of the contract and the performance of which the user as contracting party may therefore reasonably rely on. Otherwise, the author and GESIS shall only be liable for intent and gross negligence.
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+To select which boards to collect the textual data from, use the `-b` parameter to pass requester.py a list containing the strings of the short form of the board name e.g. ```python src/requester.py -b adv toy sci``` to include only these boards.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+To exclude a selection of boards from the tool, pass a list as above with the `-b` parameter and also include a `-e`.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+For more information please run ```python src/requester.py -h```
+### Run from Python
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Run ```python src/requester.py``` from the root directory after installing the requirements found in ```src/requirements.txt```, e.g. with ```pip install -r src/requirements.txt```.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+#### Versions
+Tested on Python 3.10.2 and 3.11.4
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## Overview of functionality
+### First time initialisation
+1. Two directories are created for logs, and the data (saves/"the current date")
+1. The requester will first query the 4chan API to find the current list of boards, if present the include or exclude boards are selected or removed from the list. 
+    * For every board resulting from this process, two subdirectories folder will be created in the data folder, one for storing the threads and one for the thread on each board.
+2. The requester then goes through each board to find a list of threads on each board. 
+    * These are saved to the threads_on_boards folder
+3. The requester then requests the posts on each board. 
+    * The data is saved to a subfolder of threads, with a name consisting of the thread id and the time of first observance.
+4. The loop repeats by checking each board for new and dead threads, then querying the new and live threads.
+### Reruns
+The requester attempts to pick up from previous runs by observing the state of the saves directory. If this is deleted it will act as from fresh.
+### Logs
+Debug logs are set to capture each API call and are as such, very detailed (approx 80 times as large as info). By default the info log is output to terminal.
 
-## License
-For open source projects, say how it is licensed.
+## Limits
+Please ensure you follow the 4Chan API Rules and Terms of Service found [here](https://github.com/4chan/4chan-API/blob/master/README.md).
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+At time of writing these are: 
+### API Rules ###
+
+1. Do not make more than one request per second. 
+2. Thread updating should be set to a minimum of 10 seconds, preferably higher.
+3. Use [If-Modified-Since](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since) when doing your requests.
+4. Make API requests using the same protocol as the app. Only use SSL when a user is accessing your app over HTTPS.
+
+### API Terms of Service ###
+
+1. You may not use "4chan" in the title of your application, product, or service.
+2. You may not use the 4chan name, logo, or brand to promote your application, product, or service.
+3. You must disclose the source of the information shown by your application, product, or service as 4chan, and provide a link.
+4. You may not market your application, product, or service as being "official" in any way.
+5. You may not clone 4chan or its existing features/functionality. Example: Don't suck down our JSON, host it elsewhere, and throw ads around it.
+6. These terms are subject to change without notice.
+## References
+Thank you very much to the team behind the [4Chan API](https://github.com/4chan/4chan-API)!
