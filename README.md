@@ -29,7 +29,6 @@ Run ```python src/requester.py``` from the root directory after installing the r
 #### Versions
 Tested on Python 3.10.2 and 3.11.4
 
-
 ## Overview of functionality
 ### First time initialisation
 1. Two directories are created for logs, and the data (saves/"the current date")
@@ -44,6 +43,9 @@ Tested on Python 3.10.2 and 3.11.4
 The requester attempts to pick up from previous runs by observing the state of the saves directory. If this is deleted it will act as from fresh.
 ### Logs
 Debug logs are set to capture each API call and are as such, very detailed (approx 80 times as large as info). By default the info log is output to terminal.
+
+## Stored Data Format
+After running the program, in the `saves/"the current date"`, you should see the `.json` files for the scraped contents. Refer [4chan official API documentation](https://github.com/4chan/4chan-API/blob/master/pages/Threads.md) to understand what each field means for the downloaded data.
 
 ## Limits
 Please ensure you follow the 4Chan API Rules and Terms of Service found [here](https://github.com/4chan/4chan-API/blob/master/README.md).
