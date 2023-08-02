@@ -112,7 +112,7 @@ class requester:
                         ]
                         old_threads += 1
             self._logger.debug(
-                f"{len} past captures of old threads in previous instances of {board} discovered"
+                f"{len(prev_threads)} past captures of old threads in previous instances of {board} discovered"
             )
             # old_monitor_dict will lookg like old_monitor_dict['po']['thread_no'] = [last modified, reply counts]
         self.monitoring_threads = old_monitor_dict
