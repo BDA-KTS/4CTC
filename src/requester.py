@@ -10,21 +10,27 @@ import math
 import requests
 
 
-class requester:
+class Requester:
+    """
+    The main class for 4chan scraper
+    """
     def __init__(
         self,
         monitor: bool, # always True from the starting function
-        run_in_docker: bool, # -d flag
-        boards: list = None, # boards to be scraped
+        boards: list, # boards to be scraped
         exclude_boards: bool = False, # if this is true the boards will not be collected
         request_time_limit: float = 1, # no arugment passed for this one
         stream_log_level=logging.INFO,
         logfolderpath: str = "logs",
     ):
-        if run_in_docker:
-            self._base_save_path: Path = Path("/data") # : defined object type, like the above lines 
-        else:
-            self._base_save_path: Path = Path().resolve() / "data" # .resolve() creates absolute path
+        """_summary_
+
+        :param monitor: _description_
+        :type monitor: bool
+        :param logfolderpath: _description_, defaults to "logs"
+        :type logfolderpath: str, optional
+        """
+        self._base_save_path: Path = Path().resolve() / "data" # .resolve() creates absolute path
         self._save_debuglog = True
         self._stream_log_level = stream_log_level
         self._setup_logging(logfolderpath) #set up self._logger ...etc
@@ -41,25 +47,23 @@ class requester:
         if self.monitor is True:
             self.begin_monitoring() # go into the main program
 
+    
     def begin_monitoring(self):
+        """
+        Start the monitoring program.
+        """
+        self._prepare_monitoring_boards()
         self._logger.info("Beginning monitoring")
         self._logger.info(f"Storing data in path: {self._base_save_path}")
         
-        self.monitoring_boards = []
-        self.monitoring_threads = {}
-        self._threads_last_checked = {}
         self._logger.debug("Initialising Monitoring Thread")
         self._monitor_thread = threading.Thread(target=self._begin_monitoring) # turn the function into thread
         self._logger.debug("Starting Thread")
         self._monitor_thread.start() # start the thread #TODO but isn't it just one thread here? how to achieve multithread
         self._logger.debug("Monitoring Started") 
 
-    def end_monitoring(self):
-        # not being used as well, could be used to terminiate it from outer command
-        self._logger.info("Ending loop and closing monitoring thread")
-        self.monitor = False
-        self._monitor_thread.join()
-        self._logger.info("Closed monitoring thread")
+    
+
 
     def _load_old_monitors(self): # begin_monitoring -> _begin_monitoring -> here
         """
@@ -67,7 +71,6 @@ class requester:
         self.monitoring_threads[board_code]['thread_no'] = [last modified, reply counts]
         there could be old monitored board but if this round it is not specified then the old monitored board data will not be looked
         """
-        self._update_monitoring_boards() # self.monitoring_boards is set #TODO, this should probably be moved out, its not relvant to old board
         self._logger.debug(
             "Checking for past captures of old threads in previous instances"
         )
@@ -119,24 +122,17 @@ class requester:
         self._logger.debug(
             f"{old_threads} past captures of old threads in previous instances discovered"
         )
+    
+    def _prepare_monitoring_boards(self):
+        self.monitoring_boards = []
+        self.monitoring_threads = {}
+        self._set_monitoring_boards() # self.monitoring_boards is set
 
-    def set_include_exclude_boards(
-        self, include_boards: list = None, exclude_boards: bool = False
-    ):
-        # the function is not used!! seems to be a function that can accept command to add new board for monitoring without stopping the current program
-        self._logger.info("Updating boards to monitor")
-        self._include_boards = include_boards
-        self._exclude_boards = exclude_boards
-        if include_boards is None and not exclude_boards:
-            self._check_new_boards = False
-        else:
-            self._check_new_boards = True
-
-    def _update_monitoring_boards(self): # begin_monitoring -> _begin_monitoring -> _load_old_monitors -> here
-        """_summary_
-        Check self._include_boards and self._exclude_boards
+    def _set_monitoring_boards(self): # begin_monitoring -> _begin_monitoring -> _load_old_monitors -> here
+        """
+        Preparing self.monitoring_boards which is essentially a list of board code that the program should monitor
+        Process includes checking self._include_boards and self._exclude_boards
         if exclude_boards then self._include_boards become the ones not to monitor
-        eventually self.monitoring_boards will be the ones for monitoring
         """
         self._logger.debug("Updating monitor board list (checking)")
         if self._include_boards is not None and not self._exclude_boards:
@@ -151,18 +147,30 @@ class requester:
 
     def _begin_monitoring(self): # coming from begin_monitoring function
         self._logger.debug("_begin_monitoring entered")
+
         self._load_old_monitors() # determine what boards to monitor in this run
         #  +  get monitoring board and old threads that has monitored
         self._logger.debug("Old monitors retrieved")
         while self.monitor is True:
             self._logger.debug("Started loop")
-            if self._check_new_boards: #it was set to False when _update_monitoring_boards was executed in _load_old_monitors
-                # this will never be true after the _update_monitoring_boards was executed in _load_old_monitors
+            if self._check_new_boards: #it was set to False when _set_monitoring_boards was executed in _load_old_monitors
+                # this will never be true after the _set_monitoring_boards was executed in _load_old_monitors
                 # so technically it will only be run once
                 # unless set_include_exclude_boards is actulally used, but it is not at the moment
                 self._logger.debug("Started updating monitoring boards")
-                self._update_monitoring_boards()
-            self._update_monitoring_threads() # prepare self._posts_to_update and also update what's currently being monitored in self.monitoring_threads
+                self._set_monitoring_boards()
+            
+            self._logger.info("Beginning search for threads to monitor")
+            for board in self.monitoring_boards:
+                self._logger.info(f"Searching for threads in {board}")                
+                updated_threads_json = self.get_single_board_updated_threadlist(board)
+                if updated_threads_json is None:
+                    continue # if there is no update of the threadlist information (including thread id, last modified and reply counts)
+                            # then it means threads on this board has not changed, then we can move on
+                else:
+                    self._save_thread_list(board, updated_threads_json)
+                    self._update_monitoring_threads(board, updated_threads_json)
+            
             #TODO the naming is confusing because it doesnt reflect the _posts_to_update part within the fuction
             self._logger.debug("updating posts on monitoring list")
             self._update_posts_on_monitoring_threadlist() # based on self._posts_to_update this part will be about saving the threads content
@@ -178,79 +186,66 @@ class requester:
                 # meaning it died( last modified and replies do not match, then deleted it from last_requested)
                 # deleted it 
                 del self._last_requested[board]["threads"][thread]
-                
-    def _update_monitoring_threads(self):
-        """Main usage is to figure out what threads need to be downloaded, the info is stored into self._posts_to_update [[board, thread]]
-        monitoring_threads is also updated based on the information from threads_on_boards (in the beginning this came from loading the saved threads)
-        """
-        self._logger.info("Beginning search for threads to monitor")
+
+    def _update_monitoring_threads(self, board:str, updated_threads_json:list):
         self._posts_to_update = []
         death_count = 0 # previously saved thread it does not match the ones on the current extract threadlist, meaning it's long gone and dead
         birth_count = 0 # added new board's each thread or thread id does not exist in the previously saved id (monitoring_threads), but id exist in the currently extracted threadlist, meaning its a new thread
         update_count = 0 # when thread in threadlist matches id on monitoring_threads, and its last update is newer, then update it
-        for board in self.monitoring_boards:
-            self._logger.info(f"Searching for threads in {board}")
-            #TODO should saparate to threadlist and thread part instead of putting into one single function
-            threads_json = self.get_and_save_single_board_threadlist(
-                board, with_return=True
-            )
-            if threads_json is None:
-                continue # if there is no update of the threadlist information (including thread id, last modified and reply counts)
-            # then it means threads on this board has not changed, then we can move on
-            threads_on_board = {} # basically the current threads on board
-            for page in threads_json:
-                for thread in page["threads"]:
-                    threads_on_board[str(thread["no"])] = [
-                        int(thread["last_modified"]),
-                        int(thread["replies"]),
-                    ]
-                    #threads_on_board[thread_no] = [last_modified, replies]
-            if board in self.monitoring_threads: # monitoring_threads comes from reading the saved data before program start
-                # self.monitoring_threads['po']['thread_no'] = [last modified, reply counts]
-                to_be_delete = []
-                for thread in self.monitoring_threads[board]:
-                    if thread in threads_on_board: #TODO, will monitoring_threads be updated after this? becuase it only starts from saved data
-                        pass
-                    else:
-                        self._logger.debug(f"Thread died: /{board}/{thread}")
-                        death_count += 1
-                        to_be_delete.append(thread)
-                self._delete_threads(board, to_be_delete)
-                # self._last_requested[board_code]["board"] = datetime.now().timetuple()
-                # get_thread add the part about ['threads']
-                for thread in threads_on_board: # this is key, so its the thread id
-                    # update existing threads
-                    if thread in self.monitoring_threads[board]:
-                        if (
-                            self.monitoring_threads[board][thread][0] # [last modified, replies]
-                            < threads_on_board[thread][0]
-                        ):
-                            self._logger.debug(f"Thread updated: /{board}/{thread}")
-                            self.monitoring_threads[board][thread] = threads_on_board[
-                                thread # update its last modified and replies
-                            ]
-                            self._posts_to_update.append([board, thread])  # posts to update records the board and thread we need to download the content of 
-                            update_count += 1
-                        else:
-                            self._logger.debug(
-                                f"Do not need to update thread /{board}/{thread}"
-                            )
-                    else:
-                        # add new threads
-                        self._logger.debug(f"New thread: /{board}/{thread}")
+        threads_on_board = {} # basically the current threads on board
+        for page in updated_threads_json:
+            for thread in page["threads"]:
+                threads_on_board[str(thread["no"])] = [
+                    int(thread["last_modified"]),
+                    int(thread["replies"]),
+                ]
+                #threads_on_board[thread_no] = [last_modified, replies]
+        if board in self.monitoring_threads: # monitoring_threads comes from reading the saved data before program start
+            # self.monitoring_threads['po']['thread_no'] = [last modified, reply counts]
+            # ------------------------update monitoring_threads and find out how many died
+            to_be_delete = []
+            for thread in self.monitoring_threads[board]:
+                if thread not in threads_on_board: #TODO, will monitoring_threads be updated after this? becuase it only starts from saved data
+                    self._logger.debug(f"Thread died: /{board}/{thread}")
+                    death_count += 1
+                    to_be_delete.append(thread)
+            self._delete_threads(board, to_be_delete)
+            # self._last_requested[board_code]["board"] = datetime.now().timetuple()
+            # get_thread add the part about ['threads']
+
+            for thread in threads_on_board: # this is key, so its the thread id
+                # update existing threads
+                if thread in self.monitoring_threads[board]:
+                    if (
+                        self.monitoring_threads[board][thread][0] # [last modified, replies]
+                        < threads_on_board[thread][0]
+                    ):
+                        self._logger.debug(f"Thread updated: /{board}/{thread}")
                         self.monitoring_threads[board][thread] = threads_on_board[
-                            thread
+                            thread # update its last modified and replies
                         ]
-                        self._posts_to_update.append([board, thread]) # posts to update records the board and thread we need to download the content of 
-                        birth_count += 1
-            else:
-                # this handles where the entire boared was not saved in the past in # monitoring_threads which comes from reading the saved data before program start
-                self._logger.debug(f"New Board: updated to monitor list {board}")
-                self.monitoring_threads[board] = threads_on_board
-                for thread in threads_on_board:
+                        self._posts_to_update.append([board, thread])  # posts to update records the board and thread we need to download the content of 
+                        update_count += 1
+                    else:
+                        self._logger.debug(
+                            f"Do not need to update thread /{board}/{thread}"
+                        )
+                else:
+                    # add new threads
                     self._logger.debug(f"New thread: /{board}/{thread}")
-                    self._posts_to_update.append([board, thread])
+                    self.monitoring_threads[board][thread] = threads_on_board[
+                        thread
+                    ]
+                    self._posts_to_update.append([board, thread]) # posts to update records the board and thread we need to download the content of 
                     birth_count += 1
+        else:
+            # this handles where the entire boared was not saved in the past in # monitoring_threads which comes from reading the saved data before program start
+            self._logger.debug(f"New Board: updated to monitor list {board}")
+            self.monitoring_threads[board] = threads_on_board
+            for thread in threads_on_board:
+                self._logger.debug(f"New thread: /{board}/{thread}")
+                self._posts_to_update.append([board, thread])
+                birth_count += 1
 
         self._logger.info(f"Thread deaths in previous iteration: {death_count}")
         self._logger.info(f"Thread births in previous iteration: {birth_count}")
@@ -258,6 +253,7 @@ class requester:
         self._logger.info(
             f"{len(self.monitoring_threads[board])} threads found to monitor."
         )
+
 
     def _update_posts_on_monitoring_threadlist(self):
         # main point is to use get_and_save_thread()
@@ -311,7 +307,20 @@ class requester:
                 time.sleep(self._request_time_limit - (cur_time - self.last_request))
                 self.last_request = time.time()
 
-    def get_chan_info_json(self):
+    def get_chan_info_json(self) -> dict:
+        """
+        Fetches JSON containing information about 4chan boards.
+
+        This function sends a request to the 4chan API to retrieve information about all available boards.
+        The information is returned in JSON format.
+
+        :return: A dictionary containing information about 4chan boards.
+        :rtype: dict
+
+        Note:
+        - This function is used to fetch and provide details about available boards on 4chan.
+        - Use this information for various purposes like populating board lists.
+        """
         self._check_time_and_wait()
         self._logger.debug("chan information requested")
         r_boards = requests.get("http://a.4cdn.org/boards.json")
@@ -322,7 +331,7 @@ class requester:
         since = time.gmtime(time.mktime(since))
         return {"If-Modified-Since": time.strftime("%a, %d %b %Y %H:%M:%S GMT", since)}
 
-    def get_single_board_threadlist(self, board_code:str):
+    def get_single_board_updated_threadlist(self, board_code:str):
         """get a list of all the threads within the proccessed single board
         if the board's thread list did not change since last request, return None
 
@@ -367,7 +376,19 @@ class requester:
             return None
         return r_thread_list.json()
 
-    def get_thread(self, board_code:str, op_ID:int):
+    def get_thread(self, board_code:str, op_ID:int) -> dict:
+        """
+        Fetches thread data from a 4chan API JSON endpoint.
+
+        This function sends a GET request to the 4chan API to retrieve thread data
+        in JSON format based on the provided board code and original post ID.
+
+        :param board_code: The board code representing the 4chan board (e.g., "g", "pol").
+        :param op_ID: The ID of the original post (OP) within the thread.
+        :return: A dictionary containing the JSON response data.
+        :rtype: dict
+        """
+        r_thread = requests.get
         # get the thread content info and return r_thread.json()
         self._check_time_and_wait() #TODO read this to know about the waiting time detail
         if board_code not in self._last_requested[board_code]["threads"]:
@@ -423,6 +444,19 @@ class requester:
         return r_thread.json()
 
     def get_and_save_chan_info(self, outpath:Path=None, filename:str=None):
+        """
+        Fetches 4chan board information and saves it to a JSON file.
+
+        This function sends a request to the 4chan API to retrieve information about all boards.
+        The board information is then saved to a JSON file in the specified output path with the provided filename.
+
+        :param outpath: The directory path where the JSON file will be saved.
+                        Defaults to the base save path with appropriate subdirectories.
+        :param filename: The name of the JSON file to be saved. Defaults to "boards.json".
+        
+        Note:
+        - This function is currently not being used but can be utilized to fetch and save board information.
+        """
         timestamp = self._get_day()
         if outpath is None:
             outpath = self._base_save_path / "saves" / timestamp
@@ -432,9 +466,7 @@ class requester:
         with open(outpath / filename, "w") as outfile:
             json.dump(self.get_chan_info_json(), outfile, indent=2)
 
-    def get_and_save_single_board_threadlist(
-        self, board_code:str, outpath:Path=None, filename:str=None, with_return:bool=False
-    ):
+    def _save_thread_list(self, board_code:str, threadlist:list, outpath:Path=None, filename:str=None):
         timestamp = self._get_day()
         if outpath is None:
             outpath = self._base_save_path / "saves" / timestamp / "threads_on_boards"
@@ -443,11 +475,7 @@ class requester:
             filename = board_code + self._get_time() + ".json"
             # po_12_15_10.json   _hour_minute_seconds
         outpath.mkdir(parents=True, exist_ok=True)
-        threadlist = self.get_single_board_threadlist(board_code)
-        #TODO confusing naming of get_and_save_single_board_threadlist and get_single_board_threadlist
-        #TODO need to simplfy this
-        if threadlist is None:
-            return None
+
         #if there is no change to the threadlist then return None
         #note that the first request will always result in the below, because there is no previous request to compare to
         for threads in outpath.iterdir():
@@ -456,10 +484,21 @@ class requester:
                 threads.unlink()
         with open(outpath / filename, "w") as outfile:
             json.dump(threadlist, outfile, indent=2)
-        if with_return:
-            return threadlist
 
     def get_and_save_thread(self, board_code:str, op_ID:int, outpath:Path=None, filename:str=None):
+        """
+        Fetches a specific thread from a 4chan board, and saves it to a JSON file.
+
+        This function sends a request to the 4chan API to retrieve a specific thread's data.
+        The thread's data is then saved to a JSON file in the specified output path with
+        the provided filename.
+
+        :param board_code: The board code representing the 4chan board (e.g., "g", "pol").
+        :param op_ID: The ID of the original post (OP) within the thread.
+        :param outpath: The directory path where the JSON file will be saved.
+                        Defaults to the base save path with appropriate subdirectories.
+        :param filename: The name of the JSON file to be saved. Defaults to a generated name.
+        """
         # it only save the threads that are new or updated
         # to determine if a thread is updated, it was determined based on the last modified component from the 4chan
         # so ideally if a post is dead, it will not be put for saved again
@@ -543,9 +582,6 @@ class requester:
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser(description="4TCT tool")
     argparser.add_argument(
-        "-d", action="store_true", help="Configure for running in docker"
-    )
-    argparser.add_argument(
         "-b",
         "--boards",
         metavar="boards:",
@@ -562,6 +598,56 @@ if __name__ == "__main__":
         help="Boolean flag - whether to exclude the flags after -b, e.g. '-b a c g sci -e' would exclude the boards /a/ /c/ /g/ and /sci/ from collection",
     )
     args = argparser.parse_args()
-    requester_instance = requester(
-        True, args.d, boards=args.boards, exclude_boards=args.exclude
+    requester_instance = Requester(
+        True, boards=args.boards, exclude_boards=args.exclude
     )
+
+
+
+'''unused
+    def set_include_exclude_boards(
+        self, include_boards: list = None, exclude_boards: bool = False
+    ):
+        """
+        Update the list of boards to include or exclude from monitoring.
+
+        This function allows updating the list of boards to include or exclude from the monitoring process.
+        If no boards are included and `exclude_boards` is False, the checking for new boards is turned off.
+
+        :param include_boards: A list of board codes to include in the monitoring process.
+                              Defaults to None (no change in inclusion).
+        :param exclude_boards: If True, exclude the specified boards from monitoring.
+                              If False and no boards are included, new board checking is turned off.
+
+        Note:
+        - This function is currently not being used, but it seems to be designed for adding new boards to monitor
+          without stopping the current program.
+        - Use this function to modify the list of boards being monitored.
+        """
+        # the function is not used!! seems to be a function that can accept command to add new board for monitoring without stopping the current program
+        self._logger.info("Updating boards to monitor")
+        self._include_boards = include_boards
+        self._exclude_boards = exclude_boards
+        if include_boards is None and not exclude_boards:
+            self._check_new_boards = False
+        else:
+            self._check_new_boards = True
+
+
+    def end_monitoring(self):
+        """
+        Terminate the monitoring process and close the monitoring thread.
+
+        This function allows for terminating the monitoring process by setting the `monitor` attribute to False.
+        It also waits for the `_monitor_thread` to complete using the `join` method, ensuring that the thread is closed.
+
+        Note:
+        - The `monitor` attribute controls the monitoring loop.
+        - The `_monitor_thread` is joined to ensure its completion.
+        - This function is currently not being used and can be utilized to terminate monitoring externally.
+        """
+        self._logger.info("Ending loop and closing monitoring thread")
+        self.monitor = False
+        self._monitor_thread.join()
+        self._logger.info("Closed monitoring thread")
+'''
