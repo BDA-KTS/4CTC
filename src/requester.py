@@ -1,12 +1,9 @@
-import threading
 import time
-from pathlib import Path
-from board import Board
 import logging
+from pathlib import Path
 import requests
+from board import Board
 from utils import LoggerManager, get_argparser
-
-
 
 class Requester:
     """
@@ -14,9 +11,9 @@ class Requester:
     """
     def __init__(
         self,
-        boards: list, # boards to be scraped
-        exclude_boards: bool = False, # if this is true the boards will not be collected
-        request_time_limit: float = 1, # no arugment passed for this one
+        boards: list,
+        exclude_boards: bool = False,
+        request_time_limit: float = 1,
         log_folder_path: str = "logs",
         save_log: bool = True,
         clean_log: bool = True
@@ -29,49 +26,35 @@ class Requester:
         self.logger = self._log_manager.get_logger()
         self._clean_log = clean_log
 
+        # Setup request time interval variables
+        self._last_request = None
+        self._request_time_limit: float = request_time_limit
 
-
+        # Setup monitoring boards
         self._include_boards: list = boards
         self._exclude_boards: bool = exclude_boards
-        self._request_time_limit: float = request_time_limit
-        self._check_new_boards: bool = True # always check new boards
-        self._last_requested = {}
+        self._monitoring_boards = self._set_monitoring_boards()
 
-        self.last_request = None
+        # Start scraping pipeline
+        self._begin_monitoring()
 
-        self.begin_monitoring() # go into the main program
-
-    
-    def begin_monitoring(self):
+    def _begin_monitoring(self):
         """
         Start the monitoring program.
         """
         self.logger.info("Beginning monitoring")
         self.logger.info(f"Storing data in path: {self._base_save_path}")
-        
-        self.logger.debug("Initialising Monitoring Thread")
-        self._monitor_thread = threading.Thread(target=self.new_pipeline) # turn the function into thread
-        self.logger.debug("Starting Thread")
-        self._monitor_thread.start() # start the thread #TODO but isn't it just one thread here? how to achieve multithread
-        self.logger.debug("Monitoring Started") 
+        self.logger.debug("Monitoring Started")
+        self._run_scraping_pipeline()
     
-    def new_pipeline(self):
-        self.logger.debug("_begin_monitoring entered")
-        self._set_monitoring_boards() #TODO should probably move this out
-
-        self.new_board_list = []  #TODO should probably combine to set monitoring boards in some way, also take this part out?
-        for board in self.monitoring_boards:
-            self.new_board_list.append(Board(board, self.logger))
-        
-        #TODO Caculate overall pre_threads after all boards are initialized
-        self.logger.debug("Old monitors retrieved")
-        #self.logger.debug(f"{old_threads} past captures of old threads in previous instances discovered")
+    def _run_scraping_pipeline(self):
+        self.logger.debug("scraping_pipeline_monitoring entered")
 
         # Data Collection Loop
         while True:
             self.logger.debug("Started loop")
             #TODO add check new board mechanism?
-            for board in self.new_board_list:
+            for board in self._monitoring_boards:
 
                 self._check_time_and_wait()
                 online_thread_list = board.get_online_thread_list()
@@ -100,71 +83,63 @@ class Requester:
                 self.logger.debug("Cleaning Log")
                 self._log_manager.cleanup_old_logs(days_to_keep=3)
 
-    def get_chan_info_json(self) -> dict:
-        """
-        Fetches JSON containing information about 4chan boards.
-
-        This function sends a request to the 4chan API to retrieve information about all available boards.
-        The information is returned in JSON format.
-
-        :return: A dictionary containing information about 4chan boards.
-        :rtype: dict
-
-        Note:
-        - This function is used to fetch and provide details about available boards on 4chan.
-        - Use this information for various purposes like populating board lists.
-        """
-        self._check_time_and_wait()
-        self.logger.debug("chan information requested")
-        r_boards = requests.get("http://a.4cdn.org/boards.json")
-        return r_boards.json()
-
-    def _set_monitoring_boards(self): # begin_monitoring -> _begin_monitoring -> _load_old_monitors -> here
+    def _set_monitoring_boards(self):
         """
         Preparing self.monitoring_boards which is essentially a list of board code that the program should monitor
         Process includes checking self._include_boards and self._exclude_boards
         if exclude_boards then self._include_boards become the ones not to monitor
         """
-        available_boards = self._set_board_list()
+        available_boards = self._get_4chan_board_list()
 
         self.logger.debug("Updating monitor board list (checking)")
         if self._include_boards is not None and not self._exclude_boards:
-            self.monitoring_boards = self._include_boards # monitor the _include_boards
-        elif self._include_boards is not None and self._exclude_boards: # monitor boards other than the _include_boards
-            self.monitoring_boards = list( 
+            board_list = self._include_boards
+        elif self._include_boards is not None and self._exclude_boards:
+            board_list = list( 
                 set(available_boards).difference(self._include_boards)
             )
         else: # if no boards provided then all boards are monitored
-            self.monitoring_boards = available_boards
-        self._check_new_boards = False
-
+            board_list = available_boards
         # check if all the boards that will be monitored are valid
-        for board in self.monitoring_boards:
+        for board in board_list:
             if board not in available_boards:
                 self.logger.info(f"Board code '{board}' is not available in 4chan")
                 raise KeyError(f"Board code '{board}' is not available in 4chan")
 
-    def _set_board_list(self):
-        boards_info = self.get_chan_info_json()
+        # initialize Board class list
+        monitoring_boards = []
+        for board in board_list:
+            monitoring_boards.append(Board(board, self.logger))
+        self.logger.debug("Old monitors retrieved")
+        #TODO Caculate overall pre_threads after all boards are initialized
+        #self.logger.debug(f"{old_threads} past captures of old threads in previous instances discovered")
+
+        return monitoring_boards
+    
+    def _get_4chan_board_list(self):
+        self._check_time_and_wait()
+        self.logger.debug("chan information requested")
+        boards = requests.get("http://a.4cdn.org/boards.json")
+        boards_info = boards.json()
         codes = [board["board"] for board in boards_info["boards"]]
         return codes
 
     def _check_time_and_wait(self):
-        if self.last_request is None:
-            self.last_request = time.time()
+        if self._last_request is None:
+            self._last_request = time.time()
         else:
             cur_time = time.time()
-            if cur_time - self.last_request >= self._request_time_limit:
-                self.last_request = cur_time
+            if cur_time - self._last_request >= self._request_time_limit:
+                self._last_request = cur_time
             else:
-                time.sleep(self._request_time_limit - (cur_time - self.last_request))
-                self.last_request = time.time()
+                time.sleep(self._request_time_limit - (cur_time - self._last_request))
+                self._last_request = time.time()
 
 if __name__ == "__main__":
     argparser = get_argparser()
     args = argparser.parse_args()
     requester_instance = Requester(
-        boards=args.boards, 
+        boards=args.boards,
         exclude_boards=args.exclude,
         request_time_limit=args.request_time_limit,
         log_folder_path=args.log_folder_path,
