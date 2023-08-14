@@ -3,7 +3,7 @@ https://github.com/4chan/4chan-API/blob/master/pages/Threads.md
 thread 內容包含 orignal post 以及 reply to it, textual information
 
 
-`nohup python src/requester.py -b po`
+`nohup python src/requester.py -b po mu`
 `nohup` to prevent program terminating after terminal closing
 This will generate a nohup.out
 
