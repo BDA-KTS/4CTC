@@ -179,3 +179,4 @@ pyrightconfig.json
 
 data/*
 src/jack_version.py
+note.md

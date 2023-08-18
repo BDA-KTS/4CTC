@@ -1,30 +1,43 @@
 # 4TCT 
 ## A 4chan Text Collection Tool
 
-## Author details
+## Author & Maintainer
 - Jack H. Culbert
 - jack.culbert@gesis.org
 - https://orcid.org/0009-0000-1581-4021
+- Maintainer in Gesis: Po-Chun Chang 
+- po-chun.chang@gesis.org
 
 ## Resource Paper
 You can find the associated technical report [here](https://arxiv.org/abs/2307.03556).
-
 Please reference this paper if you use this tool in research or your own projects.
+
+## Attribution and Maintenance Information
+Please make sure to credit and cite the author information/technical report for works that are achieved using this repo. And note that Jack will not be maintaining this repo. For any question please refer to the maintainer in Gesis.
+
 ## Disclaimer
 Both the author and GESIS are not affiliated, associated, authorized, endorsed by, or in any way officially connected with 4chan, or any of its subsidiaries or its affiliates. The official 4chan website can be found at [4chan.org](https://www.4chan.org).
 
 The names 4chan as well as related names, marks, emblems and images are registered trademarks of their respective owners.
 
 Please be aware 4chan may serve offensive and/or illegal images and texts, and it is the sole responsibility of the user to vet and remove material that may be illegal in their jurisdiction. The author and GESIS shall have unlimited liability for damages resulting from injury to life, limb or health and in the event of liability under the German Product Liability Act (Act on Liability for Defective Products). This shall also apply in the event of a breach of so-called cardinal obligations, i.e. obligations the breach of which would jeopardize the purpose of the contract and the performance of which the user as contracting party may therefore reasonably rely on. Otherwise, the author and GESIS shall only be liable for intent and gross negligence.
+
+## Repo Structure
+- The entire codes are resides in ```src/```, with ```requester.py``` being the main flow that handles the pipeline of data collection that uses instantiated board class from ```board.py``` to request information from each boards. ```utils.py``` contains helper functions that handle datetime information and logger. 
+- By default ```data/``` directory will be created for storing the collected the data once the program start running.
+- ```docs/``` is used for documentation purposes with sphinx. It is not relevent to the execution of the program.
+
 ## Usage
-To select which boards to collect the textual data from, use the `-b` parameter to pass requester.py a list containing the strings of the short form of the board name e.g. ```python src/requester.py -b adv toy sci``` to include only these boards.
+- Install the requirements found in ```requirements.txt```, e.g. with ```pip install -r requirements.txt```
+- Run ```python src/requester.py``` from the root directory.
 
-To exclude a selection of boards from the tool, pass a list as above with the `-b` parameter and also include a `-e`.
+### Target specific boards for collection
+- To select which boards to collect the textual data from, use the `-b` parameter to pass requester.py a list containing the strings of the short form of the board name e.g. ```python src/requester.py -b adv toy sci``` to include only these boards.
 
+- To exclude a selection of boards from the tool, pass a list as above with the `-b` parameter and also include a `-e`.
+
+### Other flags
 For more information please run ```python src/requester.py -h```
-### Run from Python
-
-Run ```python src/requester.py``` from the root directory after installing the requirements found in ```src/requirements.txt```, e.g. with ```pip install -r src/requirements.txt```.
 
 #### Versions
 Tested on Python 3.10.2 and 3.11.4
@@ -44,7 +57,7 @@ The requester attempts to pick up from previous runs by observing the state of t
 ### Logs
 Debug logs are set to capture each API call and are as such, very detailed (approx 80 times as large as info). By default the info log is output to terminal.
 
-## Stored Data Format
+## Output Example
 After running the program, in the `saves/"the current date"`, you should see the `.json` files for the scraped contents. Refer [4chan official API documentation](https://github.com/4chan/4chan-API/blob/master/pages/Threads.md) to understand what each field means for the downloaded data.
 
 ## Limits
@@ -52,8 +65,8 @@ Please ensure you follow the 4Chan API Rules and Terms of Service found [here](h
 
 At time of writing these are: 
 ### API Rules ###
-
-1. Do not make more than one request per second. 
+Below official API rules have been made as default setting for this repo. They are listed here for those who are interested in modifying the repo.
+1. Do not make more than one request per second. To change the waiting time, use `--request-time-limit {your_ideal_value}` flag to set your ideal waiting time (only value above 1 will be accepted).
 2. Thread updating should be set to a minimum of 10 seconds, preferably higher.
 3. Use [If-Modified-Since](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since) when doing your requests.
 4. Make API requests using the same protocol as the app. Only use SSL when a user is accessing your app over HTTPS.
