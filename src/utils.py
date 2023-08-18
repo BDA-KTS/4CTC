@@ -69,10 +69,10 @@ class LoggerManager:
     Logger class for scraper tool
     """
     def __init__(self, base_save_path: Path, logfolderpath: Path, save_log: bool):
-        if save_log:
+        self.save_log = save_log
+        if self.save_log:
             self.logfolder = base_save_path / logfolderpath
             self.logfolder.mkdir(parents=True, exist_ok=True)
-            self.save_log = save_log
         self.logfolder = base_save_path / logfolderpath
         self.logger = None
 
