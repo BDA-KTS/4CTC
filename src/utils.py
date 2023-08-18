@@ -5,6 +5,11 @@ import argparse
 import os
 
 def get_argparser():
+    """
+    Get argument parser for scraper tool
+
+    :return: argument parser
+    """
     argparser = argparse.ArgumentParser(description="4TCT tool")
     argparser.add_argument(
         "-b",
@@ -50,57 +55,19 @@ def get_argparser():
 
 
 def check_positive_float(value):
+    """
+    A helper function for argparser for minimum request interval, it checks if the value is bigger than 1
+    :return: request interval
+    """
     fvalue = float(value)
     if fvalue < 1:
         raise argparse.ArgumentTypeError(f"--request-time-limit value should be at least 1, now is {value}")
     return fvalue
 
-def setup_logging(base_save_path:Path, logfolderpath:Path, save_debug_log:bool, stream_log_level=logging.INFO):
-    # TODO, allow people to setting stream_log_level?
-    # TODO log file will pile up, how to delete from time to time
-    logfolder = base_save_path / logfolderpath
-    logfolder.mkdir(parents=True, exist_ok=True)
-
-    logger = logging.getLogger("4chan_requester")
-    logger.setLevel(logging.DEBUG)
-    log_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s: %(threadName)s - %(message)s")
-
-    streamlogs = logging.StreamHandler()
-    streamlogs.setLevel(stream_log_level) #
-    streamlogs.setFormatter(log_formatter)
-    logger.addHandler(streamlogs)
-
-    infologpath = logfolder / ("info_log" + get_full_time() + ".log")
-    infologfile = logging.FileHandler(infologpath)
-    infologfile.setLevel(logging.INFO)
-    infologfile.setFormatter(log_formatter)
-    logger.addHandler(infologfile)
-
-    if save_debug_log:
-        debuglogpath = logfolder / ("debug_log" + get_full_time() + ".log")
-        debuglogfile = logging.FileHandler(debuglogpath)
-        debuglogfile.setLevel(logging.DEBUG)
-        debuglogfile.setFormatter(log_formatter)
-        logger.addHandler(debuglogfile)
-
-    logger.debug("Logger Initalised")
-    return logger
-
-def cleanup_old_logs(logfolder: Path, days_to_keep: int = 7):
-    now = datetime.utcnow()
-    threshold_date = now - timedelta(days=days_to_keep)
-    
-    for log_file in logfolder.glob("debug_log*.log"):
-        file_date_str = log_file.name[len("debug_log"):-len(".log")]
-        file_date = datetime.strptime(file_date_str, "%Y_%m_%d_%H_%M_%S")
-        
-        if file_date < threshold_date:
-            os.remove(log_file)
-
-
-
-
 class LoggerManager:
+    """
+    Logger class for scraper tool
+    """
     def __init__(self, base_save_path: Path, logfolderpath: Path, save_log: bool):
         if save_log:
             self.logfolder = base_save_path / logfolderpath
@@ -110,6 +77,9 @@ class LoggerManager:
         self.logger = None
 
     def setup_logging(self, stream_log_level=logging.INFO):
+        """
+        Setup logger
+        """
         self.logger = logging.getLogger("4chan_requester")
         self.logger.setLevel(logging.DEBUG)
         log_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s: %(threadName)s - %(message)s")
@@ -142,6 +112,9 @@ class LoggerManager:
         return now.strftime("%Y_%m_%d_%H_%M_%S")
 
     def cleanup_old_logs(self, days_to_keep: int = 3):
+        """
+        Clean up/Delete old logs
+        """
         now = datetime.utcnow()
         threshold_date = now - timedelta(days=days_to_keep)
 
@@ -153,15 +126,24 @@ class LoggerManager:
                 os.remove(log_file)
 
     def get_logger(self):
+        """
+        :return: the logger object
+        """
         if self.logger is None:
             raise RuntimeError("Logger not set up yet. Call setup_logging() first.")
         return self.logger
 
 
 def get_time():
+    """
+    :return: time information
+    """
     now = datetime.utcnow()
     return now.strftime("_%H_%M_%S")
 
 def get_day():
+    """
+    :return: day time information
+    """
     now = datetime.utcnow()
     return now.strftime("%Y_%m_%d")

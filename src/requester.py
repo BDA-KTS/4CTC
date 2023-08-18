@@ -7,7 +7,7 @@ from utils import LoggerManager, get_argparser
 
 class Requester:
     """
-    The main class for 4chan scraper
+    The main class for 4chan scraper, it handles creation of Board and Logger class, triggering each methods in Board class for entire scrapping process
     """
     def __init__(
         self,

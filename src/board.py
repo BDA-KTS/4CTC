@@ -7,7 +7,9 @@ import os
 from utils import get_time, get_day
 
 class Board:
-
+    """
+    This is a board object that handles the request, saving, tracking to a particular board
+    """
     def __init__(self, board_code, logger):
 
         # Board Code
@@ -38,6 +40,9 @@ class Board:
         self.get_previously_saved_info()
 
     def update_saving_folder_info(self): #TODO, need to match the new logic where timestamp does not result duplicate file
+        """
+        Set up all the saving path in the class, this method is called repeatedly because save path is related to current timestamp
+        """        
         timestamp = get_day()
         # #TODO, static and argument accept?
         self.thread_list_path = self.base_save_path / "saves" / timestamp / "threads_on_boards"
@@ -46,6 +51,9 @@ class Board:
         self.thread_content_path.mkdir(parents=True, exist_ok=True)
 
     def get_previously_saved_info(self):
+        """
+        Load previously saved data into the class to prevent downloading the same thread and help monitoring update
+        """
         self.logger.debug("Checking for past captures of old threads in previous instances")
         
         for prev_thread_list_path in self.thread_list_path.iterdir(): # get file names inside the folder
@@ -67,6 +75,9 @@ class Board:
         self.logger.info(f"No previous thread information for /{self.board_code}/, no old threads to monitor")        
 
     def get_online_thread_list(self):
+        """Request the list of thread IDs on the board
+        :return: thread id list
+        """
         #TODO this can probably be a class too because it can be written in the same way like get_thread_content
         self.logger.debug(f"Board /{self.board_code}/ thread information requested")
         if self.thread_list_last_request == None:
@@ -94,6 +105,8 @@ class Board:
             raise Exception(f"404 when trying to fetch /{self.board_code}/")
 
     def save_thread_list(self, thread_list):
+        """Save the thread ID list in local directory
+        """
         self.update_saving_folder_info()
 
         #TODO, need to match the new logic where timestamp does not result duplicate file
@@ -109,6 +122,10 @@ class Board:
             json.dump(thread_list, outfile, indent=2)
 
     def get_thread_content(self, thread_id):
+        """Based on given thread ID, request the content of the thread
+
+        :return: thread content
+        """        
         thread_api_address = self.thread_content_api_prefix + "/" + str(thread_id) + ".json"
 
         request_attempt = 0
@@ -135,7 +152,8 @@ class Board:
         return request_response.json() if request_response is not None else None
 
     def save_thread_content(self, thread_id, thread_content):
-
+        """Save the thread content in local directory
+        """
         if thread_content is None:
             self.logger.warning(f"Can't save board {self.board_code}, post {thread_id}, likely 404 during requesting, skip saving")
             return
@@ -158,6 +176,9 @@ class Board:
             json.dump(thread_content, outfile, indent=2)
 
     def get_threads_to_update(self, online_threads):
+        """Comapre the currently tracking thread and the thread online, see if there are thread die out or require update
+        :return: thread list require update (download)
+        """
         threads_to_update = []
 
         death_count = 0 # previously saved thread it does not match the ones on the current extract threadlist, meaning it's long gone and dead
