@@ -56,7 +56,7 @@ def get_argparser():
 
 def check_positive_float(value):
     """
-    A helper function for argparser for minimum request interval, it checks if the value is bigger than 1
+    A helper function to ensure request interval argument is above one
     :return: request interval
     """
     fvalue = float(value)
