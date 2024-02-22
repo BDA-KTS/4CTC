@@ -11,7 +11,6 @@ A team of social scientists is conducting a research project to explore online c
 ## Structure
 - The tool's architecture includes a `src/` directory for core scripts, with `requester.py` handling data collection, `board.py` managing board-specific requests, and `utils.py` for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in `docs/`.
 
-Setup
 ## Environment Setup
 - Requires Python 3.10.2 or 3.11.4. Suitable for environments focused on data collection and analysis.
 - Dependencies are listed in `requirements.txt` and can be installed via `pip install -r requirements.txt` to ensure the tool functions correctly.
@@ -66,11 +65,11 @@ Setup
 ## Contact Details
 - For questions or contributions, contact Jack H. Culbert at jack.culbert@gesis.org and Po-Chun Chang for maintenance issues at po-chun.chang@gesis.org.
 
-## Publication (Optional)
+## Publication
 - The associated technical report is available at [arXiv:2307.03556](https://arxiv.org/abs/2307.03556). Users are encouraged to cite this paper when using the tool in research.
 
-## Acknowledgements (if any)
+## Acknowledgements
 - Gratitude is extended to the 4chan API team for providing the foundational resources that facilitate this tool's functionality.
 
-## Disclaimer (Optional)
+## Disclaimer
 - The creators of 4TCT and GESIS are not affiliated with 4chan. The tool is intended for academic research, and users are responsible for ensuring the legality and ethicality of their data use.
