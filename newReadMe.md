@@ -63,7 +63,7 @@ A team of social scientists is conducting a research project to explore online c
 - Run `python src/requester.py` to start data collection, with options `-b` for board selection and `-e` for board exclusion. Advanced usage includes adjusting request intervals and logging levels for detailed monitoring.
 - For more information please run python src/requester.py -h
 
-### To initialize**
+### To initialize
   - Two directories are created for logs, and the data (saves/"the current date")
   - The requester will first query the 4chan API to find the current list of boards, if present the include or exclude boards are selected or removed from the list. For every board resulting from this process, two subdirectories folder will be created in the data folder, one for storing the threads and one for the thread on each board.
   - The requester then goes through each board to find a list of threads on each board. These are saved to the threads_on_boards folder
