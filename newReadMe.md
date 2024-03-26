@@ -61,6 +61,16 @@ A team of social scientists is conducting a research project to explore online c
 
 ## How to Use
 - Run `python src/requester.py` to start data collection, with options `-b` for board selection and `-e` for board exclusion. Advanced usage includes adjusting request intervals and logging levels for detailed monitoring.
+- For more information please run python src/requester.py -h
+
+### To initialize**
+  - Two directories are created for logs, and the data (saves/"the current date")
+  - The requester will first query the 4chan API to find the current list of boards, if present the include or exclude boards are selected or removed from the list. For every board resulting from this process, two subdirectories folder will be created in the data folder, one for storing the threads and one for the thread on each board.
+  - The requester then goes through each board to find a list of threads on each board. These are saved to the threads_on_boards folder
+  - The requester then requests the posts on each board. The data is saved to a subfolder of threads, with a name consisting of the thread id and the time of first observance.
+  - The loop repeats by checking each board for new and dead threads, then querying the new and live threads.   
+  - **Rerun: ** The requester attempts to pick up from previous runs by observing the state of the saves directory. If this is deleted it will act as from fresh.
+  - **Logs: ** Debug logs are set to capture each API call and are as such, very detailed (approx 80 times as large as info). By default the info log is output to terminal.
 
 ## Contact Details
 - For questions or contributions, contact Jack H. Culbert at jack.culbert@gesis.org and Po-Chun Chang for maintenance issues at po-chun.chang@gesis.org.
@@ -73,3 +83,25 @@ A team of social scientists is conducting a research project to explore online c
 
 ## Disclaimer
 - The creators of 4TCT and GESIS are not affiliated with 4chan. The tool is intended for academic research, and users are responsible for ensuring the legality and ethicality of their data use.
+
+## Limitations
+Please ensure you follow the 4Chan API Rules and Terms of Service found [here](https://github.com/4chan/4chan-API/blob/master/README.md).
+
+### API Rules ###
+Below official API rules have been made as default setting for this repo. They are listed here for those who are interested in modifying the repo.
+1. Do not make more than one request per second. To change the waiting time, use `--request-time-limit {your_ideal_value}` flag to set your ideal waiting time (only value above 1 will be accepted).
+2. Thread updating should be set to a minimum of 10 seconds, preferably higher.
+3. Use [If-Modified-Since](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Modified-Since) when doing your requests.
+4. Make API requests using the same protocol as the app. Only use SSL when a user is accessing your app over HTTPS.
+
+### API Terms of Service ###
+
+1. You may not use "4chan" in the title of your application, product, or service.
+2. You may not use the 4chan name, logo, or brand to promote your application, product, or service.
+3. You must disclose the source of the information shown by your application, product, or service as 4chan, and provide a link.
+4. You may not market your application, product, or service as being "official" in any way.
+5. You may not clone 4chan or its existing features/functionality. Example: Don't suck down our JSON, host it elsewhere, and throw ads around it.
+6. These terms are subject to change without notice.
+
+## References
+Thank you very much to the team behind the [4Chan API](https://github.com/4chan/4chan-API)!
