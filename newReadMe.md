@@ -19,7 +19,7 @@ A team of social scientists is conducting a research project to explore online c
 - Dependencies are listed in `requirements.txt` and can be installed via `pip install -r requirements.txt` to ensure the tool functions correctly.
 
 
-## Input Data (DBD datasets)
+## Input Data (Digital Behavioral Data datasets)
 - Not applicable as 4TCT gathers data directly from 4chan. 
 
 ## Sample Input and Output Data
