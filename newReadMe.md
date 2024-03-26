@@ -8,7 +8,7 @@ This tool is particularly useful for analyzing online discourse, community dynam
 ## Social Science usecase(s)
 A team of social scientists is conducting a research project to explore online communities' influence on language evolution and cultural trends. They decide to focus on 4chan, known for its anonymous and varied user base, to capture authentic and unfiltered expressions. The 4chan Data Collection Tool becomes an essential component in their data acquisition strategy.
 
-## Structure
+## Repo Structure
 - The tool's architecture includes a `src/` directory for core scripts, with `requester.py` handling data collection, `board.py` managing board-specific requests, and `utils.py` for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in `docs/`.
 
 ## Environment Setup
