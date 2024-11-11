@@ -9,7 +9,9 @@ This tool is particularly useful for analyzing online discourse, community dynam
 4chan, data collection, data collection tool in python, 
 
 ## Social Science usecase(s)
-A team of social scientists is conducting a research project to explore online communities' influence on language evolution and cultural trends. They decide to focus on 4chan, known for its anonymous and varied user base, to capture authentic and unfiltered expressions. The 4chan Data Collection Tool becomes an essential component in their data acquisition strategy.
+- A **social scientist** aims to analyze the evolution of language in online communities. They use 4TCT to collect posts from multiple 4chan boards, capturing authentic, unfiltered expressions from diverse user groups.
+- A **research team** investigates the dissemination of misinformation during political events. Using 4TCT, they gather data to identify patterns and key narratives on various 4chan boards.
+- A **computational linguist** leverages 4TCT to build a corpus for training models on internet slang and meme-based text analysis.
 
 ## Repo Structure
 - The tool's architecture includes a `src/` directory for core scripts, with `requester.py` handling data collection, `board.py` managing board-specific requests, and `utils.py` for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in `docs/`.
