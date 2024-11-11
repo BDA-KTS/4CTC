@@ -63,7 +63,7 @@ This tool is particularly useful for analyzing online discourse, community dynam
 }
 ```
 
-- For explaination of the fields in downloaded .json file, refer to [4chan API page](https://github.com/4chan/4chan-API/blob/master/pages/Threads.md)
+- For explaination of the fields in downloaded `.json` file, refer to [4chan API page](https://github.com/4chan/4chan-API/blob/master/pages/Threads.md)
 
 ## How to Use
 - Run `python src/requester.py` to start data collection, with options `-b` for board selection and `-e` for board exclusion. Advanced usage includes adjusting request intervals and logging levels for detailed monitoring.
