@@ -98,7 +98,6 @@ This tool is particularly useful for analyzing online discourse, community dynam
     ```json
     {
         "boards": ["a", "g", "sci"],
-        ...
     }
     ```
 
