@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 import argparse
 import os
+import json
 
 def get_argparser():
     """
@@ -12,13 +13,19 @@ def get_argparser():
     """
     argparser = argparse.ArgumentParser(description="4TCT tool")
     argparser.add_argument(
+        "-c",
+        "--config",
+        action="store_true",
+        help="If provided, the script will load configuration from 'config.json' located one level above this file.",
+    )
+    argparser.add_argument(
         "-b",
         "--boards",
         metavar="boards:",
         nargs="*",
         action="store",
         type=str,
-        default=None,
+        default=[],
         help="List boards to include after this flag, use the short form board name from 4chan, e.g. '-b a c g sci' would collect data from the boards /a/, /c/, /g/ and /sci/",
     )
     argparser.add_argument(
@@ -34,10 +41,10 @@ def get_argparser():
         help="Wait time between each request (must be greater than 1)",
     )
     argparser.add_argument(
-        "--log-folder-path",
+        "--output-path",
         type=str,
-        default="logs",
-        help="Path for log folder (default: 'logs')",
+        default=str(Path(__file__).resolve().parents[2]),
+        help="Path for output folder (default: '4CTC repo folder')",
     )
     argparser.add_argument(
         "--no-save-log",
@@ -147,3 +154,35 @@ def get_day():
     """
     now = datetime.utcnow()
     return now.strftime("%Y_%m_%d")
+
+
+def load_and_validate_config(config_path):
+    """
+    Load configuration from a JSON file and validate required fields.
+
+    :param config_path: Path to the JSON configuration file
+    :return: Configuration dictionary
+    """
+    required_fields = [
+        "boards",
+        "exclude_boards",
+        "request_time_limit",
+        "output_path",
+        "save_log",
+        "clean_log",
+    ]
+
+    try:
+        with open(config_path, "r") as config_file:
+            config = json.load(config_file)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Config file not found at {config_path}")
+    except json.JSONDecodeError:
+        raise ValueError(f"Invalid JSON format in {config_path}")
+
+    # Verify all required fields are present
+    missing_fields = [field for field in required_fields if field not in config]
+    if missing_fields:
+        raise ValueError(f"Missing required fields in config: {', '.join(missing_fields)}")
+
+    return config

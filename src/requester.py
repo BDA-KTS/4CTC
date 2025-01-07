@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 import requests
 from board import Board
-from utils import LoggerManager, get_argparser
+from utils import LoggerManager, get_argparser, load_and_validate_config
 
 class Requester:
     """
@@ -14,14 +14,14 @@ class Requester:
         boards: list,
         exclude_boards: bool = False,
         request_time_limit: float = 1,
-        log_folder_path: str = "logs",
+        output_path: str = str(Path(__file__).resolve().parents[2]),
         save_log: bool = True,
         clean_log: bool = True
     ):
-        self._base_save_path: Path = Path().resolve() / "data" # .resolve() creates absolute path
+        self._base_save_path: Path = output_path / "data" # .resolve() creates absolute path
 
         # Setup Logger
-        self._log_manager = LoggerManager(self._base_save_path, log_folder_path, save_log)
+        self._log_manager = LoggerManager(self._base_save_path, "log", save_log)
         self._log_manager.setup_logging(stream_log_level=logging.INFO)
         self.logger = self._log_manager.get_logger()
         self._clean_log = clean_log
@@ -138,82 +138,32 @@ class Requester:
 if __name__ == "__main__":
     argparser = get_argparser()
     args = argparser.parse_args()
-    requester_instance = Requester(
+
+    if args.config:
+        config_path = Path(__file__).resolve().parent.parent / "config.json"
+        # Load configuration from the JSON file
+        config = load_and_validate_config(config_path)
+
+        # Map JSON keys to the variables
+        boards = config.get("boards", [])
+        exclude_boards = config.get("exclude_boards", False)
+        request_time_limit = config.get("request_time_limit", 1)
+        output_path = config.get("output_path", str(Path(__file__).resolve().parents[2]))
+        save_log = config.get("save_log", True)
+        clean_log = config.get("clean_log", True)
+    else:
         boards=args.boards,
         exclude_boards=args.exclude,
         request_time_limit=args.request_time_limit,
-        log_folder_path=args.log_folder_path,
+        output_path=args.output_path,
         save_log=args.save_log,
         clean_log=args.clean_log
-    )
 
-'''unused
-    def set_include_exclude_boards(
-        self, include_boards: list = None, exclude_boards: bool = False
-    ):
-        """
-        Update the list of boards to include or exclude from monitoring.
-
-        This function allows updating the list of boards to include or exclude from the monitoring process.
-        If no boards are included and `exclude_boards` is False, the checking for new boards is turned off.
-
-        :param include_boards: A list of board codes to include in the monitoring process.
-                              Defaults to None (no change in inclusion).
-        :param exclude_boards: If True, exclude the specified boards from monitoring.
-                              If False and no boards are included, new board checking is turned off.
-
-        Note:
-        - This function is currently not being used, but it seems to be designed for adding new boards to monitor
-          without stopping the current program.
-        - Use this function to modify the list of boards being monitored.
-        """
-        # the function is not used!! seems to be a function that can accept command to add new board for monitoring without stopping the current program
-        self.logger.info("Updating boards to monitor")
-        self._include_boards = include_boards
-        self._exclude_boards = exclude_boards
-        if include_boards is None and not exclude_boards:
-            self._check_new_boards = False
-        else:
-            self._check_new_boards = True
-
-
-    def end_monitoring(self):
-        """
-        Terminate the monitoring process and close the monitoring thread.
-
-        This function allows for terminating the monitoring process by setting the `monitor` attribute to False.
-        It also waits for the `_monitor_thread` to complete using the `join` method, ensuring that the thread is closed.
-
-        Note:
-        - The `monitor` attribute controls the monitoring loop.
-        - The `_monitor_thread` is joined to ensure its completion.
-        - This function is currently not being used and can be utilized to terminate monitoring externally.
-        """
-        self.logger.info("Ending loop and closing monitoring thread")
-        self.monitor = False
-        self._monitor_thread.join()
-        self.logger.info("Closed monitoring thread")
-
-    def get_and_save_chan_info(self, outpath:Path=None, filename:str=None):
-        """
-        Fetches 4chan board information and saves it to a JSON file.
-
-        This function sends a request to the 4chan API to retrieve information about all boards.
-        The board information is then saved to a JSON file in the specified output path with the provided filename.
-
-        :param outpath: The directory path where the JSON file will be saved.
-                        Defaults to the base save path with appropriate subdirectories.
-        :param filename: The name of the JSON file to be saved. Defaults to "boards.json".
-        
-        Note:
-        - This function is currently not being used but can be utilized to fetch and save board information.
-        """
-        timestamp = self._get_day()
-        if outpath is None:
-            outpath = self._base_save_path / "saves" / timestamp
-        if filename is None:
-            filename = "boards.json"
-        outpath.mkdir(parents=True, exist_ok=True)
-        with open(outpath / filename, "w") as outfile:
-            json.dump(self.get_chan_info_json(), outfile, indent=2)
-'''
+    requester_instance = Requester(
+        boards=boards,
+        exclude_boards=exclude_boards,
+        request_time_limit=request_time_limit,
+        output_path=output_path,
+        save_log=save_log,
+        clean_log=clean_log
+    )   

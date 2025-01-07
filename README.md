@@ -67,7 +67,42 @@ This tool is particularly useful for analyzing online discourse, community dynam
 
 ## How to Use
 - Run `python src/requester.py` to start data collection, with options `-b` for board selection and `-e` for board exclusion. Advanced usage includes adjusting request intervals and logging levels for detailed monitoring.
-- For more information please run python src/requester.py -h
+- To use a configuration file instead of command-line arguments, add the `-c` flag without any other arguments. (i.e. `python src/requester.py -c`) This will read settings from a `config.json` file located the root folder. 
+  - The configuration file should be structured as follows:
+    ```json
+    {
+        "boards": [], 
+        "exclude_boards": false,
+        "request_time_limit": 1,
+        "output_path": "../",
+        "save_log": false,
+        "clean_log": false
+    }
+    ```
+    - **`boards`**: A list of board short codes to monitor. If left as an empty list (`[]`), all boards will be monitored.
+    - **`exclude_boards`**: If `true`, the boards listed in `boards` will be excluded, and all others will be monitored.
+    - **`request_time_limit`**: The minimum time (in seconds) between requests to avoid overloading the server. Must be 1 or greater.
+    - **`output_path`**: Path to the directory where scraped threads and logs will be saved. A `data` folder will be created inside this path for storing results.
+    - **`save_log`**: If `true`, logs will be saved in a `log` folder under the specified `output_path`.
+    - **`clean_log`**: If `true`, logs older than three days will be automatically cleaned up.
+- **Where to Find Board Codes**:
+  - The short codes for 4chan boards can be found on the url of each [4chan boards page](https://boards.4chan.org). For example:
+    - `/a/` for Anime & Manga
+    - `/g/` for Technology
+    - `/sci/` for Science & Math
+  - Simply use the code without the slashes in the `boards` field or with the `-b` option. For instance:
+    ```bash
+    python src/requester.py -b a g sci
+    ```
+    or in the configuration file:
+    ```json
+    {
+        "boards": ["a", "g", "sci"],
+        ...
+    }
+    ```
+
+- For more information, run `python src/requester.py -h`.
 
 ### To initialize
   - Two directories are created for logs, and the data (saves/"the current date")
