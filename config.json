@@ -1,0 +1,8 @@
+{
+	"boards": [],
+	"exclude_boards": false,
+	"request_time_limit": 1,
+	"output_path": "../",
+	"save_log": false,
+	"clean_log": false
+}
