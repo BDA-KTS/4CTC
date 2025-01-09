@@ -82,7 +82,7 @@ This tool is particularly useful for analyzing online discourse, community dynam
     - **`boards`**: A list of board short codes to monitor. If left as an empty list (`[]`), all boards will be monitored.
     - **`exclude_boards`**: If `true`, the boards listed in `boards` will be excluded, and all others will be monitored.
     - **`request_time_limit`**: The minimum time (in seconds) between requests to avoid overloading the server. Must be 1 or greater.
-    - **`output_path`**: Path to the directory where scraped threads and logs will be saved. A `data` folder will be created inside this path for storing results. If set to `[""]`, this will save the output `data` folder in the root folder of the repository.
+    - **`output_path`**: Path to the directory where scraped threads and logs will be saved. A `data` folder will be created inside this path for storing results. If set to `""`, this will save the output `data` folder in the root folder of the repository.
     - **`save_log`**: If `true`, logs will be saved in a `log` folder under the specified `output_path`.
     - **`clean_log`**: If `true`, logs older than three days will be automatically cleaned up.
 - **Where to Find Board Codes**:
