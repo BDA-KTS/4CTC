@@ -14,7 +14,7 @@ This tool is particularly useful for analyzing online discourse, community dynam
 - A **computational linguist** leverages 4TCT to build a corpus for training models on internet slang and meme-based text analysis.
 
 ## Repo Structure
-- The tool's architecture includes a [src/](src/) directory for core scripts, with [requester.py](scr/requester.py) handling data collection, [board.py](src/board.py) managing board-specific requests, and [utils.py](utils.py) for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in `docs/`.
+- The tool's architecture includes a [src/](src) directory for core scripts, with [requester.py](src/requester.py) handling data collection, [board.py](src/board.py) managing board-specific requests, and [utils.py](utils.py) for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in `docs/`.
 
 ## Environment Setup
 - Requires Python>3.10.2 Suitable for environments focused on data collection and analysis.
