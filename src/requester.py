@@ -14,12 +14,15 @@ class Requester:
         boards: list,
         exclude_boards: bool = False,
         request_time_limit: float = 1,
-        output_path: str = str(Path(__file__).resolve().parents[2]),
+        output_path: str = str(Path(__file__).resolve().parents[1]),
         save_log: bool = True,
         clean_log: bool = True
     ):
+        if output_path == "":
+            output_path = str(Path(__file__).resolve().parents[1])
+        output_path = Path(output_path)
         self._base_save_path: Path = output_path / "data" # .resolve() creates absolute path
-
+        print(self._base_save_path)
         # Setup Logger
         self._log_manager = LoggerManager(self._base_save_path, "log", save_log)
         self._log_manager.setup_logging(stream_log_level=logging.INFO)
@@ -92,9 +95,9 @@ class Requester:
         available_boards = self._get_4chan_board_list()
 
         self.logger.debug("Updating monitor board list (checking)")
-        if self._include_boards is not None and not self._exclude_boards:
+        if self._include_boards != [] and not self._exclude_boards:
             board_list = self._include_boards
-        elif self._include_boards is not None and self._exclude_boards:
+        elif self._include_boards != [] and self._exclude_boards:
             board_list = list( 
                 set(available_boards).difference(self._include_boards)
             )
@@ -148,15 +151,15 @@ if __name__ == "__main__":
         boards = config.get("boards", [])
         exclude_boards = config.get("exclude_boards", False)
         request_time_limit = config.get("request_time_limit", 1)
-        output_path = config.get("output_path", str(Path(__file__).resolve().parents[2]))
+        output_path = config.get("output_path", str(Path(__file__).resolve().parents[1]))
         save_log = config.get("save_log", True)
         clean_log = config.get("clean_log", True)
     else:
-        boards=args.boards,
-        exclude_boards=args.exclude,
-        request_time_limit=args.request_time_limit,
-        output_path=args.output_path,
-        save_log=args.save_log,
+        boards=args.boards
+        exclude_boards=args.exclude
+        request_time_limit=args.request_time_limit
+        output_path=args.output_path
+        save_log=args.save_log
         clean_log=args.clean_log
 
     requester_instance = Requester(

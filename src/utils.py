@@ -43,7 +43,7 @@ def get_argparser():
     argparser.add_argument(
         "--output-path",
         type=str,
-        default=str(Path(__file__).resolve().parents[2]),
+        default=str(Path(__file__).resolve().parents[1]),
         help="Path for output folder (default: '4CTC repo folder')",
     )
     argparser.add_argument(

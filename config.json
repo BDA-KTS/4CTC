@@ -2,7 +2,7 @@
 	"boards": [],
 	"exclude_boards": false,
 	"request_time_limit": 1,
-	"output_path": "../",
-	"save_log": false,
+	"output_path": "",
+	"save_log": true,
 	"clean_log": false
 }
