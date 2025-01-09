@@ -3,21 +3,21 @@
 ## Description
 4TCT is a specialized tool designed for the efficient collection of textual data from the 4chan platform. It automates the process of gathering posts from various boards, aiming to facilitate research and analysis in social science and computational linguistics.
 
-This tool is particularly useful for analyzing online discourse, community dynamics, and trends within the 4chan ecosystem. It can support studies on topics like meme culture, information dissemination, and the impact of anonymous social media on public opinion. The research paper [User unknown: 4chan, anonymity and contingency](https://firstmonday.org/ojs/index.php/fm/article/view/3665/8696) investigates anonymity and contengency aspects of 4chan in keeping its users unknown.
+This tool is particularly useful for analyzing online discourse, community dynamics, and trends within the 4chan ecosystem. It can support studies on topics like meme culture, information dissemination, and the impact of anonymous social media on public opinion. The research paper [User unknown: 4chan, anonymity and contingency](https://firstmonday.org/ojs/index.php/fm/article/view/3665/8696) investigates anonymity and contingency aspects of 4chan in keeping its users unknown.
 
 ## Keywords
 4chan, data collection, data collection tool in python, 
 
-## Social Science usecase(s)
+## Social Science use case(s)
 - A **social scientist** aims to analyze the evolution of language in online communities. They use 4TCT to collect posts from multiple 4chan boards, capturing authentic, unfiltered expressions from diverse user groups.
 - A **research team** investigates the dissemination of misinformation during political events. Using 4TCT, they gather data to identify patterns and key narratives on various 4chan boards.
 - A **computational linguist** leverages 4TCT to build a corpus for training models on internet slang and meme-based text analysis.
 
 ## Repo Structure
-- The tool's architecture includes a `src/` directory for core scripts, with `requester.py` handling data collection, `board.py` managing board-specific requests, and `utils.py` for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in `docs/`.
+- The tool's architecture includes a [src/](src/) directory for core scripts, with [requester.py](scr/requester.py) handling data collection, [board.py](src/board.py) managing board-specific requests, and [utils.py](utils.py) for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in `docs/`.
 
 ## Environment Setup
-- Requires Python 3.10.2 or 3.11.4. Suitable for environments focused on data collection and analysis.
+- Requires Python>3.10.2 Suitable for environments focused on data collection and analysis.
 - Dependencies are listed in `requirements.txt` and can be installed via `pip install -r requirements.txt` to ensure the tool functions correctly.
 
 
