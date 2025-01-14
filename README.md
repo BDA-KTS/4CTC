@@ -102,7 +102,7 @@ This tool is particularly useful for analyzing online discourse, community dynam
     }
     ```
 
-- For more information, run:
+  - For more information, run:
     ```bash
     python src/requester.py -h
     ```
