@@ -28,7 +28,8 @@ This tool is particularly useful for analyzing online discourse, community dynam
 - Input data is not applicable as the tool dynamically collects live data from 4chan boards based on user-defined parameters.
 - Outputs include `.json` files containing collected posts, structured according to 4chan's API documentation, with directories organized by date and board.
 
-```{
+```json
+{
   "posts": [
     {
       "no": 1990691,
@@ -101,7 +102,11 @@ This tool is particularly useful for analyzing online discourse, community dynam
     }
     ```
 
-- For more information, run `python src/requester.py -h`.
+- For more information, run:
+    ```bash
+    python src/requester.py -h
+    ```
+    
 
 ### To initialize
   - Two directories are created for logs, and the data (saves/"the current date")
@@ -145,3 +150,5 @@ Below official API rules have been made as default setting for this repo. They a
 
 ## References
 Thank you very much to the team behind the [4Chan API](https://github.com/4chan/4chan-API)!
+
+
