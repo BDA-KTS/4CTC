@@ -1,17 +1,17 @@
 # 4TCT: A 4chan Text Collection Tool
 
 ## Description
-4TCT is a specialized tool designed for the efficient collection of textual data from the [4chan] (https://www.4chan.org/) platform. It automates the process of gathering posts from various boards, aiming to facilitate research and analysis in social science and computational linguistics.
+4TCT is a specialized tool designed for the efficient collection of textual data from the [4chan](https://www.4chan.org/) platform. It automates the process of gathering posts from various boards, aiming to facilitate research and analysis in social science and computational linguistics.
 
 This tool is particularly useful for analyzing online discourse, community dynamics, and trends within the 4chan ecosystem. It can support studies on topics like meme culture, information dissemination, and the impact of anonymous social media on public opinion. The research paper [User unknown: 4chan, anonymity and contingency](https://firstmonday.org/ojs/index.php/fm/article/view/3665/8696) investigates anonymity and contingency aspects of 4chan in keeping its users unknown.
 
 ## Keywords
-4chan, data collection, data collection tool in python, 
+4chan, data collection, data collection tool in Python.
 
 ## Social Science use case(s)
-- A **social scientist** aims to analyze the evolution of language in online communities. They use 4TCT to collect posts from multiple 4chan boards, capturing authentic, unfiltered expressions from diverse user groups.
-- A **research team** investigates the dissemination of misinformation during political events. Using 4TCT, they gather data to identify patterns and key narratives on various 4chan boards.
-- A **computational linguist** leverages 4TCT to build a corpus for training models on internet slang and meme-based text analysis.
+- A **social scientist** analyzes the prevalence and evolution of hate speech and extremist narratives in online communities. They use 4TCT to collect posts from various 4chan boards to study patterns and triggers for such discourse.
+- A **research team** A research team investigates how conspiracy theories emerge and spread during political events. Using 4TCT, they gather data to identify key narratives and influential threads on 4chan boards.
+- A **computational linguist** A computational linguist leverages 4TCT to build a corpus for training models on internet slang, meme-based text, and the language of conspiracy theories.
 
 ## Repo Structure
 - The tool's architecture includes a [src/](https://github.com/BDA-KTS/4CTC/tree/main/src) directory for core scripts, with [requester.py](https://github.com/BDA-KTS/4CTC/blob/main/src/requester.py) handling data collection, [board.py](https://github.com/BDA-KTS/4CTC/blob/main/src/board.py) managing board-specific requests, and [utils.py](https://github.com/BDA-KTS/4CTC/blob/main/src/utils.py) for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in [docs/](https://github.com/BDA-KTS/4CTC/tree/main/docs).
