@@ -121,7 +121,9 @@ This tool is particularly useful for analyzing online discourse, community dynam
 - For questions or contributions, contact Jack H. Culbert at jack.culbert@gesis.org and Po-Chun Chang for maintenance issues at po-chun.chang@gesis.org.
 
 ## Publication
-- The associated technical report is available at [arXiv:2307.03556](https://arxiv.org/abs/2307.03556). Users are encouraged to cite this paper when using the tool in research.
+The associated technical report is available at:
+- Culbert, J. H. (2023). 4TCT, A 4chan Text Collection Tool. arXiv preprint arXiv:2307.03556. [arXiv:2307.03556](https://arxiv.org/abs/2307.03556).
+*Users are encouraged to cite this paper when using the tool in research.*
 
 ## Acknowledgements
 - Special thanks to **Jack Culbert**, the original creator of this repository, for laying the foundation of this project.  
