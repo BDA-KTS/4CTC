@@ -8,7 +8,7 @@ This tool is particularly useful for analyzing online discourse, community dynam
 ## Keywords
 4chan, data collection, data collection tool in Python.
 
-## Social Science use case(s)
+## Social Science Use Case(s)
 - A **social scientist** analyzes the prevalence and evolution of hate speech and extremist narratives in online communities. They use 4TCT to collect posts from various 4chan boards to study patterns and triggers for such discourse.
 - A **research team** investigates how conspiracy theories emerge and spread during political events. Using 4TCT, they gather data to identify key narratives and influential threads on 4chan boards.
 - A **computational linguist** leverages 4TCT to build a corpus for training models on internet slang, meme-based text, and the language of conspiracy theories.
