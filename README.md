@@ -10,8 +10,8 @@ This tool is particularly useful for analyzing online discourse, community dynam
 
 ## Social Science use case(s)
 - A **social scientist** analyzes the prevalence and evolution of hate speech and extremist narratives in online communities. They use 4TCT to collect posts from various 4chan boards to study patterns and triggers for such discourse.
-- A **research team** A research team investigates how conspiracy theories emerge and spread during political events. Using 4TCT, they gather data to identify key narratives and influential threads on 4chan boards.
-- A **computational linguist** A computational linguist leverages 4TCT to build a corpus for training models on internet slang, meme-based text, and the language of conspiracy theories.
+- A **research team** investigates how conspiracy theories emerge and spread during political events. Using 4TCT, they gather data to identify key narratives and influential threads on 4chan boards.
+- A **computational linguist** leverages 4TCT to build a corpus for training models on internet slang, meme-based text, and the language of conspiracy theories.
 
 ## Repo Structure
 - The tool's architecture includes a [src/](https://github.com/BDA-KTS/4CTC/tree/main/src) directory for core scripts, with [requester.py](https://github.com/BDA-KTS/4CTC/blob/main/src/requester.py) handling data collection, [board.py](https://github.com/BDA-KTS/4CTC/blob/main/src/board.py) managing board-specific requests, and [utils.py](https://github.com/BDA-KTS/4CTC/blob/main/src/utils.py) for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in [docs/](https://github.com/BDA-KTS/4CTC/tree/main/docs).
