@@ -134,7 +134,7 @@ The associated technical report is available at:
 - The creators of 4TCT and GESIS are not affiliated with 4chan. The tool is intended for academic research, and users are responsible for ensuring the legality and ethicality of their data use.
 
 ## Limitations
-Please ensure you follow the 4Chan API Rules and Terms of Service found [here](https://github.com/4chan/4chan-API/blob/master/README.md).
+Please ensure you follow the 4chan API Rules and Terms of Service found [here](https://github.com/4chan/4chan-API/blob/master/README.md).
 
 ### API Rules ###
 Below official API rules have been made as default setting for this repo. They are listed here for those who are interested in modifying the repo.
@@ -153,6 +153,6 @@ Below official API rules have been made as default setting for this repo. They a
 6. These terms are subject to change without notice.
 
 ## References
-Thank you very much to the team behind the [4Chan API](https://github.com/4chan/4chan-API)!
+Thank you very much to the team behind the [4chan API](https://github.com/4chan/4chan-API)!
 
 
