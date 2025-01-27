@@ -14,19 +14,24 @@ This tool is particularly useful for analyzing online discourse, community dynam
 - A **computational linguist** leverages 4TCT to build a corpus for training models on internet slang, meme-based text, and the language of conspiracy theories.
 
 ## Repo Structure
-- The tool's architecture includes a [src/](https://github.com/BDA-KTS/4CTC/tree/main/src) directory for core scripts, with [requester.py](https://github.com/BDA-KTS/4CTC/blob/main/src/requester.py) handling data collection, [board.py](https://github.com/BDA-KTS/4CTC/blob/main/src/board.py) managing board-specific requests, and [utils.py](https://github.com/BDA-KTS/4CTC/blob/main/src/utils.py) for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in [docs/](https://github.com/BDA-KTS/4CTC/tree/main/docs).
+The tool's architecture includes a [src/](https://github.com/BDA-KTS/4CTC/tree/main/src) directory for core scripts, with [requester.py](https://github.com/BDA-KTS/4CTC/blob/main/src/requester.py) handling data collection, [board.py](https://github.com/BDA-KTS/4CTC/blob/main/src/board.py) managing board-specific requests, and [utils.py](https://github.com/BDA-KTS/4CTC/blob/main/src/utils.py) for auxiliary functions. Data is stored in a `data/` directory created upon initiation, and documentation is available in [docs/](https://github.com/BDA-KTS/4CTC/tree/main/docs).
 
 ## Environment Setup
-- Requires Python>3.10.2 Suitable for environments focused on data collection and analysis.
-- Dependencies are listed in [requirements.txt](https://github.com/BDA-KTS/4CTC/blob/main/requirements.txt) and can be installed via `pip install -r requirements.txt` to ensure the tool functions correctly.
+It Requires Python>3.10.2 Suitable for environments focused on data collection and analysis.
+
+Dependencies are listed in [requirements.txt](https://github.com/BDA-KTS/4CTC/blob/main/requirements.txt) and can be installed via `pip install -r requirements.txt` to ensure the tool functions correctly.
 
 
 ## Input Data
-- Not applicable as 4TCT gathers data directly from 4chan. 
+Not applicable as 4TCT gathers data directly from 4chan. 
 
 ## Sample Input and Output Data
-- Input data is not applicable as the tool dynamically collects live data from 4chan boards based on user-defined parameters.
-- Outputs include `.json` files containing collected posts, structured according to 4chan's API documentation, with directories organized by date and board.
+
+### Input 
+Input data is not applicable as the tool dynamically collects live data from 4chan boards based on user-defined parameters.
+
+### Output 
+Outputs include `.json` files containing collected posts, structured according to 4chan's API documentation, with directories organized by date and board.
 
 ```json
 {
@@ -64,7 +69,7 @@ This tool is particularly useful for analyzing online discourse, community dynam
 }
 ```
 
-- For explaination of the fields in downloaded `.json` file, refer to [4chan API page](https://github.com/4chan/4chan-API/blob/master/pages/Threads.md)
+For explaination of the fields in the downloaded `.json` file, refer to [4chan API page](https://github.com/4chan/4chan-API/blob/master/pages/Threads.md)
 
 ## How to Use
 - Run `python src/requester.py` to start data collection, with options `-b` for board selection and `-e` for board exclusion. Advanced usage includes adjusting request intervals and logging levels for detailed monitoring.
@@ -114,24 +119,24 @@ This tool is particularly useful for analyzing online discourse, community dynam
   - The requester then goes through each board to find a list of threads on each board. These are saved to the threads_on_boards folder
   - The requester then requests the posts on each board. The data is saved to a subfolder of threads, with a name consisting of the thread id and the time of first observance.
   - The loop repeats by checking each board for new and dead threads, then querying the new and live threads.   
-  - **Rerun: ** The requester attempts to pick up from previous runs by observing the state of the saves directory. If this is deleted it will act as from fresh.
-  - **Logs: ** Debug logs are set to capture each API call and are as such, very detailed (approx 80 times as large as info). By default the info log is output to terminal.
+  - **Rerun:** The requester attempts to pick up from previous runs by observing the state of the saves directory. If this is deleted it will act as from fresh.
+  - **Logs:** Debug logs are set to capture each API call and are as such, very detailed (approx 80 times as large as info). By default the info log is output to terminal.
 
 ## Contact Details
-- For questions or contributions, contact Jack H. Culbert at jack.culbert@gesis.org and Po-Chun Chang for maintenance issues at po-chun.chang@gesis.org.
+For questions or contributions, contact Jack H. Culbert at jack.culbert@gesis.org and Po-Chun Chang for maintenance issues at po-chun.chang@gesis.org.
 
 ## Publication
 The associated technical report is available at:
-- Culbert, J. H. (2023). 4TCT, A 4chan Text Collection Tool. arXiv preprint arXiv:2307.03556. [arXiv:2307.03556](https://arxiv.org/abs/2307.03556).
+ Culbert, J. H. (2023). 4TCT, A 4chan Text Collection Tool. arXiv preprint arXiv:2307.03556. [arXiv:2307.03556](https://arxiv.org/abs/2307.03556).
 *Users are encouraged to cite this paper when using the tool in research.*
 
 ## Acknowledgements
-- Special thanks to **Jack Culbert**, the original creator of this repository, for laying the foundation of this project.  
-- Deep appreciation to **Po-Chun Chang**, who, through iterative improvements, expanded the utility and structure of the repository, making it more robust and publishable.  
-- Gratitude is also extended to the **[4chan API team](https://github.com/4chan)** for providing the foundational resources that enable this tool's functionality.  
+Special thanks to **Jack Culbert**, the original creator of this repository, for laying the foundation of this project.  
+Deep appreciation to **Po-Chun Chang**, who, through iterative improvements, expanded the utility and structure of the repository, making it more robust and publishable.  
+Gratitude is also extended to the **[4chan API team](https://github.com/4chan)** for providing the foundational resources that enable this tool's functionality.  
 
 ## Disclaimer
-- The creators of 4TCT and GESIS are not affiliated with 4chan. The tool is intended for academic research, and users are responsible for ensuring the legality and ethicality of their data use.
+The creators of 4TCT and GESIS are not affiliated with 4chan. The tool is intended for academic research, and users are responsible for ensuring the legality and ethicality of their data use.
 
 ## Limitations
 Please ensure you follow the 4chan API Rules and Terms of Service found [here](https://github.com/4chan/4chan-API/blob/master/README.md).
