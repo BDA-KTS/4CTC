@@ -74,7 +74,7 @@ For explaination of the fields in the downloaded `.json` file, refer to [4chan A
 ## How to Use
 - Run `python src/requester.py` to start data collection, with options `-b` for board selection and `-e` for board exclusion. Advanced usage includes adjusting request intervals and logging levels for detailed monitoring.
 - To use a configuration file instead of command-line arguments, add the `-c` flag without any other arguments. (i.e. `python src/requester.py -c`) This will read settings from a [config.json](https://github.com/BDA-KTS/4CTC/blob/main/config.json) file located the root folder. 
-  - The configuration file should be structured as follows:
+  The configuration file should be structured as follows:
     ```json
     {
         "boards": [], 
@@ -91,12 +91,14 @@ For explaination of the fields in the downloaded `.json` file, refer to [4chan A
     - **`output_path`**: Path to the directory where scraped threads and logs will be saved. A `data` folder will be created inside this path for storing results. If set to `""`, this will save the output `data` folder in the root folder of the repository.
     - **`save_log`**: If `true`, logs will be saved in a `log` folder under the specified `output_path`.
     - **`clean_log`**: If `true`, logs older than three days will be automatically cleaned up.
-- **Where to Find Board Codes**:
-  - The short codes for 4chan boards can be found on the url of each [4chan boards page](https://boards.4chan.org). For example:
+      
+**Where to Find Board Codes**:
+  The short codes for 4chan boards can be found on the url of each [4chan boards page](https://boards.4chan.org). For example:
     - `/a/` for Anime & Manga
     - `/g/` for Technology
     - `/sci/` for Science & Math
-  - Simply use the code without the slashes in the `boards` field or with the `-b` option. For instance:
+    
+   Simply use the code without the slashes in the `boards` field or with the `-b` option. For instance:
     ```bash
     python src/requester.py -b a g sci
     ```
@@ -107,13 +109,13 @@ For explaination of the fields in the downloaded `.json` file, refer to [4chan A
     }
     ```
 
-  - For more information, run:
+  For more information, run:
     ```bash
     python src/requester.py -h
     ```
     
 
-### To initialize
+### To initialize:
   - Two directories are created for logs, and the data (saves/"the current date")
   - The requester will first query the 4chan API to find the current list of boards, if present the include or exclude boards are selected or removed from the list. For every board resulting from this process, two subdirectories folder will be created in the data folder, one for storing the threads and one for the thread on each board.
   - The requester then goes through each board to find a list of threads on each board. These are saved to the threads_on_boards folder
